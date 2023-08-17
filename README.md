@@ -4,6 +4,7 @@ Reports
 Module 6: 
 SQL
 
+
 Create a database for a retail store that has the following tables (minimum of 10 records for each table):
 •	Customers (customer_id, customer_name, customer_email, customer_phone)
 •	Orders (order_id, customer_id, order_date) 
