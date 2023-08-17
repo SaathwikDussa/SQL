@@ -1,0 +1,122 @@
+create database shop;
+use shop;
+create table customers (customer_id int(10) not null auto_increment,
+customer_name varchar(20) not null,
+customer_email varchar(30) not null,
+customer_phone varchar(10) default null,
+primary key(customer_id));
+
+-- create table products 
+create table products (product_id int(10) not null auto_increment,
+product_name varchar(30) not null,
+category_id int(6) not null,
+category_name varchar(20) not null,
+price int(10) not null,
+primary key(product_id));
+
+-- insert values into customers
+insert into customers values(1,'John Doe','john.doe@example.com',9876543241);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Jane Smith','jane.smith@example.com',8990123456);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Bob Johnson','bob.johnson@example.com',8698765432);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Alice Williams','alice.williams@example.com',8998765432);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Mike Brown','mike.brown@example.com',9165432876);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Sara Lee','sara.lee@example.com',8690123456);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Tom Smith','tom.smith@example.com',8998765432);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Emily Jones','emily.jones@example.com',9890654321);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Dave Wilson','dave.wilson@example.com',8999876543);
+insert into customers (customer_name,customer_email,customer_phone)
+                    values('Lisa Davis','lisa.davis@example.com',9690765432);                    
+
+-- insert values into products
+insert into products values(1,'T-Shirt',1,'Apparel',999);
+insert into products (product_name,category_id,category_name,price)
+                    values('Jeans',1,'Apparel',2499);
+insert into products (product_name,category_id,category_name,price)
+                    values('Sneakers',2,'Footwear',1999);
+insert into products (product_name,category_id,category_name,price)
+                    values('Running Shoes',2,'Footwear',2999);
+insert into products (product_name,category_id,category_name,price)
+                    values('Backpack',6,'Bags',1299);
+insert into products (product_name,category_id,category_name,price)
+                    values('Laptop',3,'Electronics',59999);
+insert into products (product_name,category_id,category_name,price)
+                    values('Smartphone',3,'Electronics',34999);
+insert into products (product_name,category_id,category_name,price)
+                    values('Headphones',4,'Accessories',2499);
+insert into products (product_name,category_id,category_name,price)
+                    values('Bluetooth Speaker',4,'Accessories',3999);
+insert into products (product_name,category_id,category_name,price)
+                    values('Smart Watch',5,'Wearables',12999);
+
+-- create order table
+create table orders(order_id int(3) not null auto_increment,
+customer_id int(10) not null,
+order_date date not null,
+primary key(order_id),
+foreign key(customer_id) References customers (customer_id)
+);
+
+-- insert values into order table
+insert into orders values(1,1,'2022-01-01');
+insert into orders (customer_id,order_date) values(1,'2022-01-02');
+insert into orders (customer_id,order_date) values(3,'2022-01-03');
+insert into orders (customer_id,order_date) values(4,'2022-01-04');
+insert into orders (customer_id,order_date) values(5,'2022-01-05');
+insert into orders (customer_id,order_date) values(6,'2022-01-06');
+insert into orders (customer_id,order_date) values(7,'2022-01-07');
+insert into orders (customer_id,order_date) values(8,'2022-01-08');
+insert into orders (customer_id,order_date) values(9,'2022-01-09');
+insert into orders (customer_id,order_date) values(10,'2022-01-10');
+update orders set customer_id=2 where order_date='2022-01-02' and order_id=2;
+
+-- create order item table
+create table order_items(order_id int(5) not null,
+product_id int(5) not null,
+quantity int(5) not null,
+price int(6) not null,
+foreign key (order_id) references orders (order_id),
+foreign key (product_id) references products (product_id)
+);
+
+-- insert values into order items
+insert into order_items values(1,1,2,1998);
+insert into order_items values(1,3,1,1999);
+insert into order_items values(2,2,1,2499);
+insert into order_items values(3,4,1,2999);
+insert into order_items values(4,5,2,2598);
+insert into order_items values(5,6,1,59999);
+insert into order_items values(6,7,1,34999);
+insert into order_items values(7,8,1,2499);
+insert into order_items values(8,9,2,7998);
+insert into order_items values(9,10,1,12999);
+
+
+
+-- • Total revenue generated by each product category in the year
+
+select p.product_name,oi.quantity,oi.price, oi.quantity*oi.price as revenue from order_items oi 
+right join products p on oi.product_id=p.product_id
+order by p.product_name;
+
+-- • Show the top 5 customers who have spent the most money at the store, along with their email address
+--  and phone number.
+
+select customer_name,customer_email,customer_phone,oi.quantity*oi.price as spent from customers c 
+left join orders o on o.customer_id=c.customer_id
+join order_items oi on o.order_id=oi.order_id
+order by spent desc;
+
+-- • Show the top 3 products in terms of revenue, along with the total number of units sold 
+--   and the total revenue for each product.
+
+select p.product_name,oi.quantity as units_sold, oi.price, oi.quantity*oi.price as revenue from order_items oi 
+right join products p on oi.product_id=p.product_id
+order by revenue desc;
